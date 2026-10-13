@@ -27,3 +27,6 @@ reference/
 # launcher build
 launcher/SBCraft.exe
 launcher/obj/
+
+# modpack build output
+modrinth/dist/

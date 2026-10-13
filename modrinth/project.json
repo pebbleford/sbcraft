@@ -1,0 +1,33 @@
+{
+  "_comment": "What to enter when creating the project on modrinth.com (Create a project -> Modpack). Not read by Modrinth itself.",
+  "project": {
+    "name": "SBCraft",
+    "slug": "sbcraft",
+    "project_type": "modpack",
+    "summary": "Real Minecraft inside FNAF: Security Breach. Build in the Pizzaplex, stun animatronics, blow things up. The Minecraft half of a passthrough mod.",
+    "body": "description.md",
+    "icon": "icon.png",
+    "categories": ["adventure", "technology"],
+    "additional_categories": ["challenging"],
+    "client_side": "required",
+    "server_side": "unsupported",
+    "license": "MIT",
+    "source_url": "https://github.com/pebbleford/sbcraft",
+    "issues_url": "https://github.com/pebbleford/sbcraft/issues",
+    "gallery": [
+      {"file": "gallery/01-hotbar-in-the-pizzaplex.jpg", "title": "In the Pizzaplex", "description": "Minecraft's hand and hotbar inside Security Breach", "featured": true},
+      {"file": "gallery/02-planks-lit-by-sb.jpg", "title": "Lit by SB", "description": "A Minecraft pillar, depth-tested and lit by the corridor's light"},
+      {"file": "gallery/03-tnt.jpg", "title": "TNT", "description": "Lit TNT on SB's floor"},
+      {"file": "gallery/04-placing-on-the-floor.jpg", "title": "Building", "description": "The block outline follows SB's floor"}
+    ]
+  },
+  "version": {
+    "name": "SBCraft 0.1.0",
+    "version_number": "0.1.0",
+    "file": "dist/SBCraft-0.1.0.mrpack",
+    "game_versions": ["26.1.2"],
+    "loaders": ["fabric"],
+    "version_type": "beta",
+    "changelog": "First release: Minecraft composited into Security Breach (depth-tested, relit), placeable blocks with collision in SB, sword stuns, TNT destruction (never floors), ender pearl teleports, bows and crossbows."
+  }
+}
