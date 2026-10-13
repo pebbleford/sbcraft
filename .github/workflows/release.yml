@@ -1,0 +1,63 @@
+# On every push to main: build the Minecraft mod, the Modrinth pack and the SB add-on, and put them on the release for
+# the version in mc/gradle.properties (v<version>). A new version number makes a new release; otherwise the existing
+# release's files are replaced with the fresh build. Fabric API is re-hosted unchanged (Apache-2.0).
+name: release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - name: Fetch third-party pieces (UE4SS, ReShade headers, Fabric API)
+        shell: bash
+        run: bash scripts/fetch_deps.sh
+
+      - name: Build the Minecraft mod
+        shell: bash
+        working-directory: mc
+        run: ./gradlew build --no-daemon --console=plain
+
+      - name: Build the Modrinth pack
+        shell: bash
+        run: python modrinth/build_mrpack.py
+
+      - name: Build the SB add-on
+        shell: cmd
+        run: call sb\addon\build.bat
+
+      - name: Publish to the release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          V=$(grep '^version=' mc/gradle.properties | cut -d= -f2 | tr -d '\r')
+          FILES=("mc/build/libs/sbcraft-$V.jar" "third_party/dl/fabric-api-0.155.3+26.1.2.jar"
+                 "modrinth/dist/SBCraft-$V.mrpack" "sb/addon/build/SBCraft.addon64")
+          ls -la "${FILES[@]}"
+          sed -e "s/<version>/$V/g" .github/release-notes.md > notes.md
+          printf '\nBuilt from %s (%s).\n' "${GITHUB_SHA::7}" "$(git log -1 --format=%s)" >> notes.md
+          if gh release view "v$V" > /dev/null 2>&1; then
+            gh release upload "v$V" "${FILES[@]}" --clobber
+            gh release edit "v$V" --notes-file notes.md --latest
+          else
+            gh release create "v$V" "${FILES[@]}" --title "SBCraft $V" --notes-file notes.md --target "$GITHUB_SHA" --latest
+          fi

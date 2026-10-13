@@ -34,6 +34,19 @@ Security Breach (UE4.27, -dx11)                                Minecraft 26.1.2 
 contract (ownership, units, channels, lifecycle) is in [docs/CONTRACT.md](docs/CONTRACT.md). Everything learned
 building it, including the dead ends, is in [MODLOG.md](MODLOG.md).
 
+## Download
+
+Prebuilt files are on the **[latest release](https://github.com/pebbleford/sbcraft/releases/latest)**, rebuilt
+automatically on every update:
+
+- `sbcraft-<version>.jar`: the mod
+- `fabric-api-0.155.3+26.1.2.jar`: Fabric API, which the mod needs
+- `SBCraft-<version>.mrpack`: both in a Modrinth modpack
+- `SBCraft.addon64`: the prebuilt SB add-on
+
+With these you can skip building (steps 2 and 4 below, and Visual Studio). For the add-on, put `SBCraft.addon64`
+into `sb/addon/build/` before running `sb/install.sh`.
+
 ## What you need
 
 - **Windows 10/11.**
