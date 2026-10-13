@@ -451,6 +451,9 @@ namespace host
 			g_linkDir = line.empty() ? mod + L"\\link" : line;
 		}
 		CreateDirectoryW(g_linkDir.c_str(), nullptr);
+		// a new session: old pearls and actions must never replay
+		DeleteFileW((g_linkDir + L"\\sb_teleport.txt").c_str());
+		DeleteFileW((g_linkDir + L"\\sb_actions.txt").c_str());
 		std::ifstream flags(g_linkDir + L"\addon_flags.txt");
 		std::string word;
 		while (flags >> word)

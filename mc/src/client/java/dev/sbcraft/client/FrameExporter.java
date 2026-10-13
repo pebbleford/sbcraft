@@ -6,6 +6,10 @@ import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.systems.CommandEncoder;
 import dev.sbcraft.Passthrough;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.ChatScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
 import java.lang.invoke.VarHandle;
@@ -81,6 +85,7 @@ public final class FrameExporter {
 		float far;
 		long frame;
 		long captureNanos;
+		boolean hidden;
 
 		void allocate(final int w, final int h) {
 			this.free();
@@ -102,6 +107,17 @@ public final class FrameExporter {
 
 			this.color = this.depth = this.overlay = null;
 		}
+	}
+
+	/**
+	 * Minecraft's own screens (title, loading, pause, death, ...) are opaque and would cover the host's whole picture:
+	 * only gameplay with the HUD, chat and inventories is handed over.
+	 */
+	private static boolean hidden() {
+		Minecraft minecraft = Minecraft.getInstance();
+		Screen screen = minecraft.screen;
+		return minecraft.level == null || minecraft.player == null
+			|| (screen != null && !(screen instanceof ChatScreen) && !(screen instanceof AbstractContainerScreen<?>));
 	}
 
 	public static void setFar(final float depthFar) {
@@ -183,6 +199,12 @@ public final class FrameExporter {
 		c.frame = ++frameCounter;
 		c.captureNanos = now;
 		CommandEncoder encoder = RenderSystem.getDevice().createCommandEncoder();
+		c.hidden = hidden();
+		if (c.hidden) {
+			// a menu or loading screen: hand SB an empty frame, so it shows through
+			encoder.clearColorTexture(target.getColorTexture(), TRANSPARENT);
+			encoder.clearDepthTexture(target.getDepthTexture(), 1.0);
+		}
 		encoder.copyTextureToBuffer(target.getColorTexture(), c.color, 0L, () -> {}, 0);
 		DepthReadback.copy(target.getDepthTexture(), c.depth, w, h);
 		encoder.clearColorTexture(target.getColorTexture(), TRANSPARENT);
@@ -203,6 +225,9 @@ public final class FrameExporter {
 		}
 
 		long generation = c.generation;
+		if (c.hidden || hidden()) {
+			RenderSystem.getDevice().createCommandEncoder().clearColorTexture(target.getColorTexture(), TRANSPARENT);
+		}
 		RenderSystem.getDevice().createCommandEncoder().copyTextureToBuffer(target.getColorTexture(), c.overlay, 0L, () -> {
 			if (c.generation == generation && c.busy) {
 				publish(c);

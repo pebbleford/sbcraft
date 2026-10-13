@@ -131,3 +131,10 @@ Nearest prior project: `examples/minecraft-gta5-passthrough` (Minecraft 26.3 Fab
   Gotchas: Lua in SB can't open files through a directory junction ("No such file or directory") → link folder lives
   in the mod folder; PowerShell hex literals ≥ 0x80000000 are negative Int32; under Git Bash, `ProgramFiles(x86)` is
   dropped from cmd's environment and `NoDefaultCurrentDirectoryInExePath` is set (use `.\vswhere.exe`).
+- 2026-10-13 fixes from play: (1) ender pearls: the Lua skipped the first sb_teleport.txt of a session (same bug as
+  actions) → absent file at first look = seq 0; the add-on deletes stale sb_teleport/sb_actions at start. MC side was
+  fine (26.1.2 ThrownEnderpearl → ServerPlayer.teleport(TeleportTransition)). (2) "screen weird near blocks": MC's
+  in-wall overlay (SB's camera inside a 1 m wall barrier) → ScreenEffectRenderer.getViewBlockingState returns null while
+  active. (3) MC's own screens (title/loading/pause/death) were composited opaque over SB → FrameExporter blanks colour,
+  depth and overlay unless in gameplay, chat or a container screen. (4) the SB blocking boxes ignore ECC_Visibility (3)
+  and ECC_Camera (4), so SB's interaction traces pass through them; they still block pawns.

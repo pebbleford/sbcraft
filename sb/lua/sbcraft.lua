@@ -292,6 +292,10 @@ local function spawn_box(s, x, y, z)
     step("SetBoxExtent", function() box:SetBoxExtent({X = BOX_HALF, Y = BOX_HALF, Z = BOX_HALF}, true) end)
     step("SetCollisionProfileName", function() box:SetCollisionProfileName(FName("BlockAll"), true) end)
     step("SetCollisionEnabled", function() box:SetCollisionEnabled(3) end) -- QueryAndPhysics
+    -- solid for bodies (Gregory, animatronics), but transparent to SB's interaction/visibility traces and its camera,
+    -- so doors, buttons and pickups behind or next to a block still work
+    pcall(function() box:SetCollisionResponseToChannel(3, 0) end) -- ECC_Visibility -> ignore
+    pcall(function() box:SetCollisionResponseToChannel(4, 0) end) -- ECC_Camera -> ignore
     pcall(function() actor:SetActorHiddenInGame(true) end) -- TriggerBox draws nothing in game anyway
     return actor
 end
@@ -337,12 +341,15 @@ end
 
 local function sync_teleport(s)
     local text = read_lines("sb_teleport.txt")
-    if not text then return end
+    if not text then
+        if s.teleportSeq == nil then s.teleportSeq = 0 end -- no file yet: the next one is a real pearl
+        return
+    end
     local seq = tonumber(text:match("^seq (%d+)"))
     if not seq or seq == s.teleportSeq then return end
     local first = s.teleportSeq == nil
     s.teleportSeq = seq
-    if first then return end -- an old file from before this session
+    if first then return end -- a file already there at start (the add-on clears them, but be safe)
     local x, y, z = text:match("feet (%-?[%d%.]+) (%-?[%d%.]+) (%-?[%d%.]+)")
     if not x or not valid(s.pawn) then return end
     local half = 0.0
