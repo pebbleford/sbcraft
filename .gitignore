@@ -1,0 +1,25 @@
+# downloads (UE4SS, ReShade, Fabric API): fetched by scripts/fetch_deps.sh, never committed
+third_party/
+
+# builds and run state
+mc/build/
+mc/run/
+mc/.gradle/
+.gradle/
+sb/addon/build/
+run/
+out/
+*.log
+
+# local tooling
+.venv/
+__pycache__/
+*.pyc
+
+# the upstream example this started from (see README credits) — not republished here
+reference/
+
+# editors
+.idea/
+.vscode/
+*.iml

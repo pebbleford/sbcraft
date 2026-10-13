@@ -1,0 +1,33 @@
+{
+	"schemaVersion": 1,
+	"id": "sbcraft",
+	"version": "${version}",
+	"name": "SBCraft",
+	"description": "Minecraft inside FNAF: Security Breach: SB's camera drives Minecraft's, SB's floors and walls become invisible blocks, and Minecraft's picture is composited into SB by the SBCraft ReShade add-on.",
+	"authors": [
+		"liam (built with Claude Code)"
+	],
+	"license": "MIT",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"dev.sbcraft.Passthrough"
+		],
+		"client": [
+			"dev.sbcraft.client.PassthroughClient"
+		]
+	},
+	"mixins": [
+		"sbcraft.mixins.json",
+		{
+			"config": "sbcraft.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.2",
+		"minecraft": "~26.1.2",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}
