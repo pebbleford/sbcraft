@@ -128,6 +128,30 @@ In Steam, right-click **FNAF: Security Breach → Properties → Launch options*
 
 `-dx11` is required, because the depth compositing reads SB's D3D11 depth buffer. Windowed mode is recommended.
 
+### 7. (Optional) One-click Steam entry
+
+Build the launcher, then add it to your Steam library as a non-Steam game:
+
+```bash
+cmd //c "$(cygpath -w launcher/build.bat)"
+```
+
+```bash
+pwsh -NoProfile -File launcher/add_to_steam.ps1
+```
+
+`add_to_steam.ps1` closes Steam for a few seconds, which also closes any game you're running. It backs up your
+`shortcuts.vdf`, adds an **SBCraft** entry pointing at `launcher\SBCraft.exe`, and reopens Steam. You can also add
+`SBCraft.exe` by hand: **Games → Add a Non-Steam Game to My Library → Browse**.
+
+Pressing **Play** on SBCraft does the following:
+
+1. Starts the Minecraft dev client (`gradlew runClient`), unless one is already running, and waits for its link.
+2. Starts Security Breach through Steam with `-dx11 -windowed -ResX=1920 -ResY=1080`.
+3. Closes that Minecraft when you quit SB.
+
+It logs to `run\launcher.log`. The first launch builds the mod, which takes a minute or two.
+
 ## Play
 
 1. Start Minecraft with the SBCraft profile and leave its window open. It renders slowly when minimized.

@@ -121,3 +121,13 @@ Nearest prior project: `examples/minecraft-gta5-passthrough` (Minecraft 26.3 Fab
     SB's light streaks on blocks), tint 0.35, grade 0.4; re-projection, edge softening, contact shadows back on, glow off.
     No hang in gameplay → the splash hang was the loading-screen present (guarded by pawn != DefaultPawn).
   - Gotchas: Lua 5.4 for-loop variables are const; a GetActorBounds(bOnlyColliding=true) on mesh-less actors gives 0.
+- 2026-10-13 **Steam one-click launcher.** `launcher/SBCraft.ps1` (starts `gradlew runClient` unless the link port 25599
+  is open, waits for it, `steam -applaunch 747660 -dx11 -windowed -ResX=1920 -ResY=1080`, waits for
+  fnaf9-Win64-Shipping to exit, closes the Minecraft it started by exact PID) behind `launcher/SBCraft.exe` (hidden
+  PowerShell, waits so Steam shows "playing"). `launcher/add_to_steam.ps1` writes a non-Steam shortcut into
+  `userdata/<newest>/config/shortcuts.vdf` (binary VDF, appid = crc32('"exe"' + name) | 0x80000000) with Steam shut
+  down (`steam -shutdown`), backup `shortcuts.vdf.sbcraft-backup`. Tested end to end: MC link up in 20 s, SB up 4 s
+  later, add-on + Lua on the new default link folder `Win64\Mods\SBCraft\link`; on SB exit Minecraft closed.
+  Gotchas: Lua in SB can't open files through a directory junction ("No such file or directory") → link folder lives
+  in the mod folder; PowerShell hex literals ≥ 0x80000000 are negative Int32; under Git Bash, `ProgramFiles(x86)` is
+  dropped from cmd's environment and `NoDefaultCurrentDirectoryInExePath` is set (use `.\vswhere.exe`).

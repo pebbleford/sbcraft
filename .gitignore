@@ -23,3 +23,7 @@ reference/
 .idea/
 .vscode/
 *.iml
+
+# launcher build
+launcher/SBCraft.exe
+launcher/obj/
