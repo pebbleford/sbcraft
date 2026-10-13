@@ -30,3 +30,6 @@ launcher/obj/
 
 # modpack build output
 modrinth/dist/
+
+# installer build output
+installer/dist/

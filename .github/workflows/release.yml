@@ -43,6 +43,10 @@ jobs:
         shell: cmd
         run: call sb\addon\build.bat
 
+      - name: Build the one-step installer
+        shell: bash
+        run: python installer/build_zip.py
+
       - name: Publish to the release
         shell: bash
         env:
@@ -51,7 +55,8 @@ jobs:
           set -euo pipefail
           V=$(grep '^version=' mc/gradle.properties | cut -d= -f2 | tr -d '\r')
           FILES=("mc/build/libs/sbcraft-$V.jar" "third_party/dl/fabric-api-0.155.3+26.1.2.jar"
-                 "modrinth/dist/SBCraft-$V.mrpack" "sb/addon/build/SBCraft.addon64")
+                 "modrinth/dist/SBCraft-$V.mrpack" "sb/addon/build/SBCraft.addon64"
+                 "installer/dist/SBCraft-Installer-$V.zip")
           ls -la "${FILES[@]}"
           sed -e "s/<version>/$V/g" .github/release-notes.md > notes.md
           printf '\nBuilt from %s (%s).\n' "${GITHUB_SHA::7}" "$(git log -1 --format=%s)" >> notes.md

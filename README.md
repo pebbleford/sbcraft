@@ -36,8 +36,19 @@ building it, including the dead ends, is in [MODLOG.md](MODLOG.md).
 
 ## Download
 
-Prebuilt files are on the **[latest release](https://github.com/pebbleford/sbcraft/releases/latest)**, rebuilt
-automatically on every update:
+**Easiest:** download **`SBCraft-Installer-<version>.zip`** from the
+**[latest release](https://github.com/pebbleford/sbcraft/releases/latest)** and extract it. Close SB and the Minecraft
+Launcher, then double-click `Install SBCraft.cmd`.
+
+- It finds Security Breach on any drive, or asks for its folder.
+- It downloads UE4SS and ReShade from their official sites and installs SBCraft into SB.
+- It sets up Fabric and an **SBCraft** installation in the Minecraft Launcher.
+- It puts **Play SBCraft** on your desktop. That shortcut opens the Minecraft Launcher (press Play on SBCraft), then
+  starts SB in D3D11 mode once Minecraft is ready.
+
+No Git, Java or Visual Studio needed.
+
+The same release also has the individual files, rebuilt automatically on every update:
 
 - `sbcraft-<version>.jar`: the mod
 - `fabric-api-0.155.3+26.1.2.jar`: Fabric API, which the mod needs

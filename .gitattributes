@@ -4,3 +4,6 @@ mc/gradlew text eol=lf
 *.bat text eol=crlf
 *.ini text eol=crlf
 *.jar binary
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+installer/README.txt text eol=crlf
