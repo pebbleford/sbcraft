@@ -21,6 +21,8 @@
    ```bash
    bash sb/install.sh
    ```
+   It finds SB on any drive (every Steam library). If it can't, run it as
+   `SB_DIR="D:\SteamLibrary\steamapps\common\Quarters" bash sb/install.sh`.
 3. **Play.** Start SB with the launch option `-dx11`, start Minecraft with the SBCraft instance, and load your save.
 
 Full instructions are in the [README](../../#install). This release is rebuilt automatically on every push to

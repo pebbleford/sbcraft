@@ -129,7 +129,14 @@ name):
 - ReShade as `dxgi.dll`, `SBCraft.addon64`, `ReShade.ini`, `ReShadePreset.ini` and `reshade-shaders\`
 
 It refuses to overwrite files it didn't install (`FORCE=1` overrides) and records everything it added in
-`.sbcraft_manifest`. If SB is installed somewhere else, set `SB_DIR` to the folder that contains `fnaf9`.
+`.sbcraft_manifest`.
+
+The script finds SB in any of your Steam libraries, on any drive, and prints where it installs. If it can't find SB,
+point it at the `Quarters` folder yourself:
+
+```bash
+SB_DIR="D:\SteamLibrary\steamapps\common\Quarters" bash sb/install.sh
+```
 
 ### 6. Set SB's launch options
 

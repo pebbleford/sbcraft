@@ -2,15 +2,35 @@
 # Installs the SB side of SBCraft into Security Breach's Win64 folder, or removes it again.
 #   sb/install.sh            install UE4SS v3.0.1 + the SBCraft Lua mod (+ ReShade and the add-on once built)
 #   sb/install.sh --remove   delete exactly the files listed in the manifest it wrote
+# SB is found in every Steam library (any drive); SB_DIR="D:\...\Quarters" picks the install by hand.
 # It refuses to overwrite a file it didn't install (FORCE=1 overrides). Files come from third_party/ (downloaded,
 # never committed) and sb/ (ours).
 set -euo pipefail
 HERE=$(cd "$(dirname "$0")" && pwd)
 ROOT=$(cd "$HERE/.." && pwd)
-SB_DIR=${SB_DIR:-"/c/Program Files (x86)/Steam/steamapps/common/Quarters"}
+
+# Steam's own folder (registry), then every library listed in its libraryfolders.vdf
+steam_libraries() {
+	local steam
+	steam=$(reg query 'HKCU\Software\Valve\Steam' //v SteamPath 2>/dev/null | sed -n 's/.*SteamPath[[:space:]]*REG_SZ[[:space:]]*//p' | tr -d '\r')
+	[ -n "$steam" ] || steam="C:/Program Files (x86)/Steam"
+	echo "$steam"
+	local vdf="$steam/steamapps/libraryfolders.vdf"
+	[ -f "$vdf" ] && sed -n 's/^[[:space:]]*"path"[[:space:]]*"\(.*\)"/\1/p' "$vdf" | sed 's/\\\\/\\/g' | tr -d '\r'
+}
+if [ -z "${SB_DIR:-}" ]; then
+	while IFS= read -r lib; do
+		[ -n "$lib" ] || continue
+		cand="$(cygpath -u "$lib")/steamapps/common/Quarters"
+		if [ -f "$cand/fnaf9/Binaries/Win64/fnaf9-Win64-Shipping.exe" ]; then SB_DIR=$cand; break; fi
+	done < <(steam_libraries)
+fi
+[ -n "${SB_DIR:-}" ] || { echo "Security Breach not found in your Steam libraries: run with SB_DIR=\"D:\\...\\steamapps\\common\\Quarters\""; exit 1; }
+SB_DIR=$(cygpath -u "$SB_DIR")
 WIN64="$SB_DIR/fnaf9/Binaries/Win64"
 MANIFEST="$WIN64/.sbcraft_manifest"
-[ -f "$WIN64/fnaf9-Win64-Shipping.exe" ] || { echo "no SB at $WIN64 (set SB_DIR)"; exit 1; }
+[ -f "$WIN64/fnaf9-Win64-Shipping.exe" ] || { echo "no SB at $WIN64 (set SB_DIR to the folder that contains fnaf9)"; exit 1; }
+echo "Security Breach: $SB_DIR"
 
 if [ "${1:-}" = "--remove" ]; then
 	[ -f "$MANIFEST" ] || { echo "nothing installed (no manifest)"; exit 0; }
